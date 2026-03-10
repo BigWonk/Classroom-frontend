@@ -188,3 +188,7 @@
   --shadow-2xl: var(--shadow-2xl);
 }
 
+.page-title
+{
+  @apply text-3xl font-bold text-foreground --tracking-light
+}
