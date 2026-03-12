@@ -76,7 +76,12 @@ export const SubjectsList = () =>
             <div className="actions-row">
             <div className="search-field">
             <Search className = "search-icon"></Search>
-            <input type="text" placeholder="search by name..." className="pl-8 w-full"value = {searchQuery}onChange={(e) => setSearchQuery(e.target.value)}/>
+            <input
+              type="text"
+              placeholder="search by name..."
+              className="pl-8 w-full"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}/>
             </div>
             <div className="flex gap-2 w-full sm:w-auto">
                 <Select value={selectedDepartment} onValueChange={setSelectedDepartment}>
