@@ -1,7 +1,7 @@
 import { Pagination } from "@/components/ui/pagination";
 import { BACKEND_BASE_URL } from "@/constants";
 import { ListResponse } from "@/types";
-import { BaseRecord, DataProvider, GetListParams, GetListResponse } from "@refinedev/core";
+import { BaseRecord, DataProvider, GetListParams, GetListResponse, HttpError } from "@refinedev/core";
 import {createDataProvider, CreateDataProviderOptions} from "@refinedev/rest";
 interface Subject extends BaseRecord {
   id: number;
@@ -37,6 +37,24 @@ const mockSubjects: Subject[] = [
     createdAt: new Date().toISOString(),
   }
 ];
+const buildHttpError = async(res:Response):Promise<HttpError> =>
+{
+let message = "Request failed"
+
+try {
+  const payload = (await res.json()) as {message?: string}
+
+  if(payload?.message) message = payload.message
+} catch {
+  
+
+}
+return{
+  message, 
+  statusCode: res.status
+}
+
+}
 
 const options: CreateDataProviderOptions = {
   getList:
@@ -63,11 +81,13 @@ const options: CreateDataProviderOptions = {
     },
     mapResponse: async(response) =>
     {
-      const payload: ListResponse = await response.clone().json();
+      if(!response.ok) throw await buildHttpError(response);
+       const payload: ListResponse = await response.clone().json();
       return payload.data ?? [];
     },
     getTotalCount: async (response) => 
     {
+      if(!response.ok) throw await buildHttpError(response);
       const payload: ListResponse = await response.clone().json();
       return payload.pagination ?.total ?? payload.data?.length ?? 0;
     }
