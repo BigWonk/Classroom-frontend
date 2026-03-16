@@ -33,7 +33,7 @@ const initializeWidget = () =>
         uploadPreset: CLOUDINARY_UPLOAD_PRESET,
         multiple: false,
         folder: "uploads",
-        maxFile: 5000000,
+        maxFileSize: 5000000,
         clientAllowedFormats: ["png", 'jpg', 'jpeg', 'webp']
     
 
