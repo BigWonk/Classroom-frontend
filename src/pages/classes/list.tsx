@@ -169,49 +169,38 @@ export const ClassesList = () => {
   const subjects = subjectsQuery.data?.data || [];
   const teachers = teachersQuery.data?.data || [];
 
+  const filters = useMemo(() => {
   const subjectFilters =
     selectedSubject === "all"
       ? []
-      : [
-          {
-            field: "subject",
-            operator: "eq" as const,
-            value: selectedSubject,
-          },
-        ];
+      : [{ field: "subject", operator: "eq" as const, value: selectedSubject }];
 
   const teacherFilters =
     selectedTeacher === "all"
       ? []
-      : [
-          {
-            field: "teacher",
-            operator: "eq" as const,
-            value: selectedTeacher,
-          },
-        ];
+      : [{ field: "teacher", operator: "eq"as const, value: selectedTeacher }];
 
   const searchFilters = searchQuery
-    ? [
-        {
-          field: "name",
-          operator: "contains" as const,
-          value: searchQuery,
-        },
-      ]
+    ? [{ field: "name", operator: "contains"as const, value: searchQuery }]
     : [];
+
+  return [...subjectFilters, ...teacherFilters, ...searchFilters];
+}, [selectedSubject, selectedTeacher, searchQuery]);
 
   const classesTable = useTable<ClassListItem>({
     columns: classColumns,
     refineCoreProps: {
       resource: "classes",
+      queryOptions: {
+      retry: false,
+      },
       pagination: {
         pageSize: 10,
         mode: "server",
       },
       filters: {
-        // Compose refine filters from the current UI selections.
-        permanent: [...subjectFilters, ...teacherFilters, ...searchFilters],
+        
+        permanent: filters,
       },
       sorters: {
         initial: [
